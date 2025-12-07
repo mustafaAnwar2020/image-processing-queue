@@ -54,13 +54,22 @@ class DashboardController extends Controller
         return back()->with('error', 'Failed to upload image.');
     }
 
+    public function getImageStatus(Request $request)
+    {
+        $imageIds = $request->input('ids', []);
+        
+        $images = Image::where('user_id', Auth::id())
+            ->whereIn('id', $imageIds)
+            ->get(['id', 'status', 'variants'])
+            ->keyBy('id');
+        
+        return response()->json($images);
+    }
+
     private function getUserImages()
     {
-        $images = Image::where('user_id', Auth::id())->get();
-        foreach ($images as $image) {
-            $image->url = Storage::url($image->original_path);
-        }
-
-        return $images->toArray();
+        return Image::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }
