@@ -33,7 +33,7 @@ A modern Laravel application for uploading and processing images with real-time 
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone [<repository-url>](https://github.com/mustafaAnwar2020/image-processing-queue)
 cd queuesApp
 ```
 
