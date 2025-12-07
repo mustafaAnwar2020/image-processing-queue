@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
+use App\Jobs\ProcessImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
-        $images = $this->getUserImages();
-        return view('dashboard', compact('images'));
+        $userImages = $this->getUserImages();
+
+        return view('dashboard', compact('userImages'));
     }
 
     public function uploadImage(Request $request)
@@ -26,20 +25,28 @@ class DashboardController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('images', 'public');
+
             
-            // Get existing images from session
             $images = $this->getUserImages();
+
             
-            // Add new image
             $images[] = [
                 'path' => $path,
                 'url' => Storage::url($path),
                 'name' => $request->file('image')->getClientOriginalName(),
                 'uploaded_at' => now()->toDateTimeString(),
             ];
+
             
-            // Store back in session
-            session(['user_images_' . auth()->id() => $images]);
+            session(['user_images_' . Auth::id() => $images]);
+
+            $image = Image::create([
+                'user_id' => Auth::id(),
+                'original_path' => $path,
+                'status' => 'pending',
+            ]);
+
+            ProcessImage::dispatch($image->id);
 
             return back()->with('success', 'Image uploaded successfully!');
         }
@@ -49,7 +56,11 @@ class DashboardController extends Controller
 
     private function getUserImages()
     {
-        return session('user_images_' . auth()->id(), []);
+        $images = Image::where('user_id', Auth::id())->get();
+        foreach ($images as $image) {
+            $image->url = Storage::url($image->original_path);
+        }
+
+        return $images->toArray();
     }
 }
-

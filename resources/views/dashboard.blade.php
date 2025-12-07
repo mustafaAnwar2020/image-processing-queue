@@ -50,9 +50,6 @@
     <div class="bg-white dark:bg-[#161615] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-lg p-8">
         <h2 class="text-xl font-semibold mb-4 text-[#1b1b18] dark:text-[#EDEDEC]">Your Images</h2>
         
-        @php
-            $userImages = session('user_images_' . auth()->id(), []);
-        @endphp
 
         @if(empty($userImages))
             <div class="text-center py-12">
@@ -64,7 +61,7 @@
                     <div class="relative group">
                         <div class="aspect-square overflow-hidden rounded-lg border border-[#e3e3e0] dark:border-[#3E3E3A]">
                             <img 
-                                src="{{ Storage::url($image['path']) }}" 
+                                src="{{ Storage::url($image['original_path']) }}" 
                                 alt="{{ $image['name'] ?? 'Uploaded image' }}"
                                 class="w-full h-full object-cover"
                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23ddd\' width=\'100\' height=\'100\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3EImage%3C/text%3E%3C/svg%3E'"
