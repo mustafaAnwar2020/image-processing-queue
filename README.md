@@ -58,12 +58,7 @@ php artisan key:generate
 
 ### 5. Database setup
 
-For SQLite (default):
-```bash
-touch database/database.sqlite
-```
-
-Or configure MySQL/PostgreSQL in `.env`:
+configure MySQL/PostgreSQL in `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
