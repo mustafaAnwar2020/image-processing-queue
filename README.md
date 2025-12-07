@@ -1,59 +1,281 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Image Upload & Processing Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern Laravel application for uploading and processing images with real-time status updates. Built with Laravel 12, featuring queue-based image processing, authentication, and a beautiful UI with Tailwind CSS.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-  **User Authentication** - Secure login and registration system
+-  **Image Upload** - Upload images (JPEG, PNG, JPG, GIF, WEBP) up to 2MB
+-  **Queue Processing** - Background job processing for image resizing
+-  **Real-time Status Updates** - Live status updates without page refresh
+-  **Image Variants** - Automatic generation of thumbnails, medium, and large sizes
+-  **Modern UI** - Beautiful interface with Tailwind CSS and dark mode support
+-  **Responsive Design** - Works seamlessly on desktop and mobile devices
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend**: Laravel 12
+- **Frontend**: Blade Templates, Tailwind CSS 4, Vite
+- **Image Processing**: Intervention Image v3
+- **Database**: SQLite (default, can be changed to MySQL/PostgreSQL)
+- **Queue**: Laravel Queue System
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2 or higher
+- Composer
+- Node.js 20.19+ or 22.12+ (for Vite)
+- NPM or Yarn
+- MySQL/PostgreSQL
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+### 1. Clone the repository
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <repository-url>
+cd queuesApp
+```
 
-### Premium Partners
+### 2. Install PHP dependencies
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+```
+
+### 3. Install Node dependencies
+
+```bash
+npm install
+```
+
+### 4. Environment setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 5. Database setup
+
+For SQLite (default):
+```bash
+touch database/database.sqlite
+```
+
+Or configure MySQL/PostgreSQL in `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=queuesapp
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 6. Run migrations
+
+```bash
+php artisan migrate
+```
+
+### 7. Create storage link
+
+```bash
+php artisan storage:link
+```
+
+### 8. Build assets
+
+```bash
+npm run build
+```
+
+## Running the Application
+
+### Development Mode
+
+For development with hot reload and queue processing:
+
+```bash
+composer run dev
+```
+
+This command runs:
+- Laravel development server
+- Queue worker
+- Log viewer (Pail)
+- Vite dev server
+
+### Production Mode
+
+1. **Start the server:**
+```bash
+php artisan serve
+```
+
+2. **Start the queue worker** (in a separate terminal):
+```bash
+php artisan queue:work
+```
+
+3. **Build assets:**
+```bash
+npm run build
+```
+
+## Usage
+
+### 1. Register/Login
+
+- Visit `/register` to create a new account
+- Or visit `/login` to sign in with existing credentials
+
+### 2. Upload Images
+
+- Navigate to `/dashboard`
+- Click "Choose Image" and select an image file
+- Click "Upload Image"
+- The image will be queued for processing
+
+### 3. View Status
+
+- Images appear in the gallery with real-time status updates
+- Status badges show: **Pending** => **Processing** => **Done**
+- Status updates automatically every 2 seconds
+
+### 4. Image Variants
+
+Once processing is complete, the system generates:
+- **Thumbnail**: 150px width
+- **Medium**: 600px width
+- **Large**: 1200px width
+
+## Project Structure
+
+```
+queuesApp/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Auth/
+│   │   │   ├── LoginController.php
+│   │   │   └── RegisterController.php
+│   │   └── DashboardController.php
+│   ├── Jobs/
+│   │   └── ProcessImage.php      # Image processing job
+│   └── Models/
+│       ├── Image.php
+│       └── User.php
+├── database/
+│   └── migrations/
+│       └── 2025_12_07_052430_create_images_table.php
+├── resources/
+│   └── views/
+│       ├── assets/
+│       │   ├── upload.blade.php
+│       │   └── preview.blade.php
+│       ├── auth/
+│       │   ├── login.blade.php
+│       │   └── register.blade.php
+│       └── dashboard.blade.php
+└── routes/
+    └── web.php
+```
+
+## API Endpoints
+
+### Authentication
+- `GET /login` - Show login form
+- `POST /login` - Authenticate user
+- `GET /register` - Show registration form
+- `POST /register` - Create new user
+- `POST /logout` - Logout user
+
+### Dashboard
+- `GET /dashboard` - User dashboard
+- `POST /dashboard/upload` - Upload image
+- `POST /dashboard/image-status` - Get image status (JSON API)
+
+## Queue Configuration
+
+The application uses Laravel's queue system for background image processing. Configure your queue driver in `.env`:
+
+```env
+QUEUE_CONNECTION=database
+```
+
+For production, consider using Redis:
+```env
+QUEUE_CONNECTION=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+## Image Processing
+
+Images are processed asynchronously using the `ProcessImage` job:
+
+1. Image uploaded → Status: `pending`
+2. Job dispatched to queue
+3. Job processes → Status: `processing`
+4. Variants generated → Status: `done`
+5. If error occurs → Status: `failed`
+
+## Real-time Updates
+
+The application uses JavaScript polling to update image status in real-time:
+- Polls every 2 seconds
+- Only checks images with `pending` or `processing` status
+- Automatically stops polling for `done` or `failed` images
+
+## Troubleshooting
+
+### Images not displaying
+
+1. Ensure storage link exists:
+```bash
+php artisan storage:link
+```
+
+2. Check file permissions:
+```bash
+chmod -R 775 storage
+chmod -R 775 bootstrap/cache
+```
+
+### Queue not processing
+
+1. Start the queue worker:
+```bash
+php artisan queue:work
+```
+
+2. Check queue configuration in `.env`
+
+### Vite manifest error
+
+Build the assets:
+```bash
+npm run build
+```
+
+Or run dev server:
+```bash
+npm run dev
+```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Support
+
+For issues and questions, please open an issue on the repository.
