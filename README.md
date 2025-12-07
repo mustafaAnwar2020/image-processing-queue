@@ -17,7 +17,7 @@ A modern Laravel application for uploading and processing images with real-time 
 - **Backend**: Laravel 12
 - **Frontend**: Blade Templates, Tailwind CSS 4, Vite
 - **Image Processing**: Intervention Image v3
-- **Database**: SQLite (default, can be changed to MySQL/PostgreSQL)
+- **Database**: MySQL/PostgreSQL
 - **Queue**: Laravel Queue System
 
 ## Requirements
